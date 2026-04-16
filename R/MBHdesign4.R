@@ -347,13 +347,13 @@ quasiSamp <- function (n, dimension = 2, study.area = NULL, potential.sites = NU
   repeat{
     samp <- quasiSamp_fromhyperRect(nSampsToConsider, randStartType = randStartType, designParams) #randStartType was hardwired to be 2 (19 May 2023)
     sampIDs <- class::knn1(designParams$potential.sites, samp[, 1:designParams$dimension, drop = FALSE], 1:nrow(designParams$potential.sites))
-    closePotential <- designParams$potential.sites[sampIDs, ]
+    closePotential <- designParams$potential.sites[sampIDs, , drop = FALSE]
     dist.1d <- abs(closePotential - samp[, 1:designParams$dimension, drop = FALSE])
     within.cells <- matrix(NA, nrow = nrow(dist.1d), ncol = ncol(dist.1d))
     for (ii in 1:designParams$dimension) 
       within.cells[, ii] <- dist.1d[,ii] <= c2c[ii]
     inArea <- rowSums(within.cells) == designParams$dimension
-    samp <- samp[inArea, ]
+    samp <- samp[inArea, , drop = FALSE]
     sampIDs <- sampIDs[inArea]
     sampIDs.2 <- which(samp[, designParams$dimension + 1] < designParams$inclusion.probs1[sampIDs])
     if( (length( sampIDs.2) > 0) & (randStartType!=3 | sampIDs.2[1]==1))
